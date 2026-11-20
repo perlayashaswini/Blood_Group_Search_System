@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>LifeLink | Blood Group Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand"
+        ><b>♥</b
+        ><span>life<span>link</span><small>BLOOD DONOR NETWORK</small></span></a
+      >
+      <div class="network">
+        ●
+        <span
+          ><b>Community network</b
+          ><small>Connecting people. Saving lives.</small></span
+        >
+      </div>
+      <p class="navcap">MAIN MENU</p>
+      <nav>
+        <button class="active" data-page="home">▦ Overview</button
+        ><button data-page="search">⌕ Find a donor</button
+        ><button data-page="donors">♙ Donor directory</button
+        ><button data-page="requests">♡ Blood requests</button
+        ><button data-page="notifications">
+          ♧ Notifications <i id="notifCount">0</i>
+        </button>
+        <p class="navcap admin">COORDINATION</p>
+        <button class="admin" data-page="verify">✓ Verify donors</button
+        ><button class="admin" data-page="reports">▥ Reports & backup</button>
+      </nav>
+      <div class="sidebottom">
+        <div class="safety">
+          <b>✦ Every connection matters</b>
+          <p>
+            Medical eligibility must always be confirmed by qualified healthcare
+            professionals.
+          </p>
+        </div>
+        <div class="user">
+          <b id="userName">Guest user</b
+          ><small id="userRole">Not signed in</small
+          ><button onclick="logout()">Sign out</button>
+        </div>
+      </div>
+    </aside>
+    <main>
+      <header>
+        <button
+          class="mobile"
+          onclick="document.getElementById('sidebar').classList.toggle('show')"
+        >
+          ☰</button
+        ><span>LifeLink / <b id="crumb">Overview</b></span>
+        <div>
+          <small id="date"></small
+          ><button class="signin" onclick="openAuth()" id="authBtn">
+            Sign in
+          </button>
+        </div>
+      </header>
+      <div class="content">
+        <section class="page active" id="home">
+          <div class="welcome">
+            <div>
+              <small>● A NETWORK BUILT ON KINDNESS</small>
+              <h1>Give hope. <em>Share life.</em></h1>
+              <p>
+                Find potential blood donors, coordinate requests, and keep your
+                community connected.
+              </p>
+            </div>
+            <button class="primary" onclick="go('search')">
+              Find a blood donor →
+            </button>
+          </div>
+          <div class="hero">
+            <small>A LITTLE HELP CAN MEAN EVERYTHING</small>
+            <h2>When every moment<br />counts, connection matters.</h2>
+            <p>
+              Search a growing donor directory by blood group, location and
+              availability.
+            </p>
+            <button onclick="go('search')">Search the donor network ↗</button>
+          </div>
+          <div class="section">
+            <div>
+              <h2>Network overview</h2>
+              <p>Community activity at a glance</p>
+            </div>
+            <label>DEMO NETWORK</label>
+          </div>
+          <div class="metrics">
+            <article>
+              <small>Registered donors</small><b id="mDonors">0</b
+              ><span>Profiles in directory</span>
+            </article>
+            <article>
+              <small>Available donors</small><b id="mAvailable">0</b
+              ><span>Verified & available</span>
+            </article>
+            <article>
+              <small>Open requests</small><b id="mRequests">0</b
+              ><span>Awaiting coordination</span>
+            </article>
+            <article>
+              <small>Verified donors</small><b id="mVerified">0</b
+              ><span>Reviewed profiles</span>
+            </article>
+          </div>
+          <div class="columns">
+            <div class="panel">
+              <h3>Explore by blood group</h3>
+              <p>Choose a group to start your search</p>
+              <div class="bloods" id="bloodTiles"></div>
+            </div>
+            <div class="panel join">
+              <div class="heart">♥</div>
+              <h3>Become a donor</h3>
+              <p>
+                Your willingness to help could make a meaningful difference to
+                someone in need.
+              </p>
+              <button class="outline" onclick="donorForm()">
+                Register as a donor →
+              </button>
+            </div>
+          </div>
+          <div class="quote">
+            “ <b>One donor can make a world of difference.</b>
+            <span>Be the reason someone gets another tomorrow. ♥</span>
+          </div>
+        </section>
+        <section class="page" id="search">
+          <div class="heading">
+            <div>
+              <small>DONOR DISCOVERY</small>
+              <h1>Find a blood donor</h1>
+              <p>
+                Search verified donor profiles by blood group, city and
+                availability.
+              </p>
+            </div>
+            <button class="outline" onclick="requestForm()">
+              ＋ Create blood request
+            </button>
+          </div>
+          <div class="searchhero">
+            <b>Looking for a match?</b>
+            <p>
+              Choose the required blood group and narrow results by location.
+            </p>
+          </div>
+          <div class="panel filters">
+            <label
+              >Blood group<select id="fBlood">
+                <option value="">All blood groups</option>
+              </select></label
+            ><label
+              >City / location<input
+                id="fCity"
+                placeholder="e.g. Guntur" /></label
+            ><label
+              >Availability<select id="fAvail">
+                <option value="">Any availability</option>
+                <option>Available</option>
+                <option>Unavailable</option>
+              </select></label
+            ><button class="primary" onclick="renderSearch()">
+              Search donors
+            </button>
+          </div>
+          <div class="section">
+            <div>
+              <h2>Matching donors</h2>
+              <p id="resultCaption">Select filters to explore the directory.</p>
+            </div>
+            <label id="resultCount">0 results</label>
+          </div>
+          <div class="cards" id="searchResults"></div>
+        </section>
+        <section class="page" id="donors">
+          <div class="heading">
+            <div>
+              <small>COMMUNITY DIRECTORY</small>
+              <h1>Donor directory</h1>
+              <p>Browse donor profiles and manage availability.</p>
+            </div>
+            <button class="primary" onclick="donorForm()">
+              ＋ Register donor
+            </button>
+          </div>
+          <div class="panel">
+            <input
+              id="directorySearch"
+              placeholder="Search name, blood group or city..."
+              oninput="renderDirectory()"
+            />
+            <div id="directoryTable"></div>
+          </div>
+        </section>
+        <section class="page" id="requests">
+          <div class="heading">
+            <div>
+              <small>REQUEST COORDINATION</small>
+              <h1>Blood requests</h1>
+              <p>Create a requirement and follow its progress.</p>
+            </div>
+            <button class="primary" onclick="requestForm()">
+              ＋ New request
+            </button>
+          </div>
+          <div class="metrics four">
+            <article>ALL REQUESTS<b id="rAll">0</b></article>
+            <article>OPEN<b id="rOpen">0</b></article>
+            <article>IN PROGRESS<b id="rProgress">0</b></article>
+            <article>FULFILLED<b id="rDone">0</b></article>
+          </div>
+          <div class="panel" id="requestsTable"></div>
+        </section>
+        <section class="page" id="notifications">
+          <div class="heading">
+            <div>
+              <small>UPDATES</small>
+              <h1>Notifications</h1>
+              <p>Important activity from your LifeLink network.</p>
+            </div>
+            <button class="outline" onclick="markRead()">
+              Mark all as read
+            </button>
+          </div>
+          <div class="panel" id="notificationList"></div>
+        </section>
+        <section class="page" id="verify">
+          <div class="heading">
+            <div>
+              <small>COORDINATOR WORKSPACE</small>
+              <h1>Verify donors</h1>
+              <p>
+                Review submitted donor profiles before they appear in verified
+                search results.
+              </p>
+            </div>
+          </div>
+          <div class="panel" id="verificationTable"></div>
+        </section>
+        <section class="page" id="reports">
+          <div class="heading">
+            <div>
+              <small>SYSTEM MANAGEMENT</small>
+              <h1>Reports & backup</h1>
+              <p>Review network statistics and export a local data backup.</p>
+            </div>
+            <button class="primary" onclick="backup()">
+              ↓ Download backup
+            </button>
+          </div>
+          <div class="metrics">
+            <article>DONORS<b id="repDonors">0</b></article>
+            <article>REQUESTS<b id="repRequests">0</b></article>
+            <article>NOTIFICATIONS<b id="repNotifs">0</b></article>
+            <article>VERIFIED<b id="repVerified">0</b></article>
+          </div>
+          <div class="panel">
+            <h3>Blood group distribution</h3>
+            <div id="distribution"></div>
+          </div>
+          <div class="panel">
+            <h3>Restore a backup</h3>
+            <p>Restoring replaces current browser demo data.</p>
+            <input type="file" accept=".json" onchange="restore(event)" />
+          </div>
+        </section>
+      </div>
+      <footer>
+        © 2026 LifeLink Blood Donor Network <span>Built around care ♥</span>
+      </footer>
+    </main>
+    <div class="modalbg" id="auth">
+      <form class="modal" onsubmit="login(event)">
+        <button type="button" class="x" onclick="closeM('auth')">×</button
+        ><small>WELCOME TO LIFELINK</small>
+        <h2>Sign in to your account</h2>
+        <label>Username<input name="username" required /></label
+        ><label
+          >Password<input name="password" type="password" required
+        /></label>
+        <div class="demo">
+          <b>Demo accounts</b><span>Admin: admin / admin123</span
+          ><span>Coordinator: coord / coord123</span
+          ><span>Requester: requester / req123</span
+          ><span>Donor: donor / donor123</span>
+        </div>
+        <button class="primary wide">Sign in</button>
+      </form>
+    </div>
+    <div class="modalbg" id="donorModal">
+      <form class="modal" onsubmit="saveDonor(event)">
+        <button type="button" class="x" onclick="closeM('donorModal')">×</button
+        ><small>JOIN THE DONOR NETWORK</small>
+        <h2>Donor registration</h2>
+        <div class="formgrid">
+          <label>Full name<input name="name" required /></label
+          ><label>Date of birth<input name="dob" type="date" required /></label
+          ><label
+            >Gender<select name="gender" required>
+              <option value="">Select</option>
+              <option>Female</option>
+              <option>Male</option>
+              <option>Other</option>
+            </select></label
+          ><label
+            >Blood group<select
+              name="blood"
+              required
+              class="bloodOptions"
+            ></select></label
+          ><label>Phone<input name="phone" required /></label
+          ><label>Email<input name="email" type="email" /></label
+          ><label>Address<input name="address" /></label
+          ><label>City<input name="city" required /></label
+          ><label
+            >Availability<select name="availability">
+              <option>Available</option>
+              <option>Unavailable</option>
+            </select></label
+          ><label
+            >Last donation date<input name="lastDonation" type="date"
+          /></label>
+        </div>
+        <p class="disclaimer">
+          Submitting a profile does not establish medical eligibility to donate.
+          Eligibility must be confirmed by a healthcare professional or blood
+          bank.
+        </p>
+        <div class="actions">
+          <button type="button" class="outline" onclick="closeM('donorModal')">
+            Cancel</button
+          ><button class="primary">Submit profile</button>
+        </div>
+      </form>
+    </div>
+    <div class="modalbg" id="requestModal">
+      <form class="modal" onsubmit="saveRequest(event)">
+        <button type="button" class="x" onclick="closeM('requestModal')">
+          ×</button
+        ><small>BLOOD REQUIREMENT</small>
+        <h2>Create a blood request</h2>
+        <div class="formgrid">
+          <label>Requester name<input name="requester" required /></label
+          ><label>Contact number<input name="phone" required /></label
+          ><label
+            >Blood group<select
+              name="blood"
+              required
+              class="bloodOptions"
+            ></select></label
+          ><label
+            >Required units<input
+              name="units"
+              type="number"
+              min="1"
+              max="20"
+              value="1"
+              required /></label
+          ><label>Hospital name<input name="hospital" required /></label
+          ><label>Location / city<input name="location" required /></label
+          ><label>Required date<input name="date" type="date" required /></label
+          ><label
+            >Priority<select name="priority">
+              <option>Normal</option>
+              <option>Urgent</option>
+              <option>Critical</option>
+            </select></label
+          >
+        </div>
+        <p class="disclaimer">
+          For emergencies, contact emergency services and a licensed hospital or
+          blood bank immediately. This demo does not dispatch blood or guarantee
+          a donor.
+        </p>
+        <div class="actions">
+          <button
+            type="button"
+            class="outline"
+            onclick="closeM('requestModal')"
+          >
+            Cancel</button
+          ><button class="primary">Submit request</button>
+        </div>
+      </form>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
